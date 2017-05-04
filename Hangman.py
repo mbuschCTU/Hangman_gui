@@ -9,15 +9,16 @@ https://vimeo.com/168051968
 """
 import arcade
 from random import choice
-import attr
+import string
+# import attr
 
 SPRITE_SCALING = 1.5
 
-SCREEN_WIDTH = 500
+SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SPRITE_WIDTH = 163 * SPRITE_SCALING
 SPRITE_HEIGHT = 152 * SPRITE_SCALING
-BALL_RADIUS = 20
+# BALL_RADIUS = 20
 
 class Hangman(arcade.Sprite):
 
@@ -37,8 +38,8 @@ class Hangman(arcade.Sprite):
             self.top = SCREEN_HEIGHT - 1
 
 #------------------------------------------------#
-
-class Word():
+# @attr.s
+class Word(object):
     """ 
     Class responsible for selecting target word, drawing blanks,
     drawing correct guesses, drawing wrong guesses.
@@ -88,19 +89,6 @@ class MyApplication(arcade.Window):
         # The default is once every 1/80 of a second.
         # self.set_update_rate(1/80)
 
-    # def setup(self):
-    #     self.target_word = None
-    #     with open("wordlist.txt",'r') as infile:
-    #         target_word = choice(list(infile))
-    #     self.target_word = self.target_word.rstrip()
-    #     self.guess_word = ['_'] * len(self.target_word)
-    #     self.all_sprites_list = arcade.SpriteList()
-    #     for i in range(0,8):
-    #         self.player_sprite = Hangman("Hangman"+str(i)+".png", SPRITE_SCALING)
-    #         self.player_sprite.center_x = 90
-    #         self.player_sprite.center_y = 90
-    #         self.all_sprites_list.append(self.player_sprite)
-    #     print('Setup done.')
 
     def on_draw(self):
         """
@@ -120,8 +108,14 @@ class MyApplication(arcade.Window):
 
 
         # Draw the text
-        arcade.draw_text("This is a simple template to start your game.",
-                         10, SCREEN_HEIGHT // 2, arcade.color.BLACK, 20)
+        arcade.draw_text('Used Letters',
+                         SCREEN_WIDTH //2, SCREEN_HEIGHT - 50, arcade.color.BLACK, 36)
+
+        arcade.draw_text('Target Word',
+                         10, SCREEN_HEIGHT // 3 + 75, arcade.color.BLACK, 36)
+
+        arcade.draw_text(' '.join(self.word.guess_word),
+                         10, SCREEN_HEIGHT // 3, arcade.color.BLACK,36)
 
     def animate(self, delta_time):
         """
@@ -151,6 +145,13 @@ class MyApplication(arcade.Window):
         # See if the user hit Shift-Space
         # (Key modifiers are in powers of two, so you can detect multiple
         # modifiers by using a bit-wise 'and'.)
+
+        #Check for actual alphabet key
+        if key in range(arcade.key.A, arcade.key.Z):
+            self.word.used_letters.append(chr(key).upper())
+            print("you pressed ", chr(key).upper())
+
+
         if key == arcade.key.SPACE and key_modifiers == arcade.key.MOD_SHIFT:
             print("You pressed shift-space")
 
