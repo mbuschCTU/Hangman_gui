@@ -52,6 +52,7 @@ class Word(object):
         with open(fname,'r') as infile:
             self.target_word = choice(list(infile))
         self.target_word = self.target_word.rstrip()
+        print('Target word =  ', self.target_word)
         self.target_length = len(self.target_word)
         self.guess_word = ['_'] * self.target_length
         self.used_letters = []
@@ -106,10 +107,12 @@ class MyApplication(arcade.Window):
         # Draw Hangman sprite
         self.all_sprites_list[self.current_sprite].draw()
 
-
+        self.word.used_letters = ['A','S','F']
         # Draw the text
         arcade.draw_text('Used Letters',
                          SCREEN_WIDTH //2, SCREEN_HEIGHT - 50, arcade.color.BLACK, 36)
+        arcade.draw_text(' '.join(self.word.used_letters), SCREEN_WIDTH//2, SCREEN_HEIGHT - 75,
+                         arcade.color.BLUE, 24)
 
         arcade.draw_text('Target Word',
                          10, SCREEN_HEIGHT // 3 + 75, arcade.color.BLACK, 36)
@@ -117,22 +120,6 @@ class MyApplication(arcade.Window):
         arcade.draw_text(' '.join(self.word.guess_word),
                          10, SCREEN_HEIGHT // 3, arcade.color.BLACK,36)
 
-    def animate(self, delta_time):
-        """
-        All the logic to move, and the game logic goes here.
-        """
-        # Move the ball
-        # self.ball_x_position += self.ball_x_pixels_per_second * delta_time
-        #
-        # # Did the ball hit the right side of the screen while moving right?
-        # if self.ball_x_position > SCREEN_WIDTH - BALL_RADIUS \
-        #         and self.ball_x_pixels_per_second > 0:
-        #     self.ball_x_pixels_per_second *= -1
-        #
-        # # Did the ball hit the left side of the screen while moving left?
-        # if self.ball_x_position < BALL_RADIUS \
-        #         and self.ball_x_pixels_per_second < 0:
-        #     self.ball_x_pixels_per_second *= -1
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -159,31 +146,15 @@ class MyApplication(arcade.Window):
         elif key == arcade.key.SPACE:
             print("You pressed the space bar.")
 
-    def on_key_release(self, key, key_modifiers):
-        """
-        Called whenever the user lets off a previously pressed key.
-        """
-        if key == arcade.key.SPACE:
-            print("You stopped pressing the space bar.")
 
-    def on_mouse_motion(self, x, y, delta_x, delta_y):
-        """
-        Called whenever the mouse moves.
-        """
-        pass
+# ------------------------------------------------#
 
-    def on_mouse_press(self, x, y, button, key_modifiers):
-        """
-        Called when the user presses a mouse button.
-        """
-        pass
+def handle_input(letter, target):
+    """"""
+    return a, b
 
-    def on_mouse_release(self, x, y, button, key_modifiers):
-        """
-        Called when a user releases a mouse button.
-        """
-        pass
+ind1, ind2 = handle_input()
 
-window = MyApplication(SCREEN_WIDTH, SCREEN_HEIGHT)
-
-arcade.run()
+if __name__ == '__main__':
+    window = MyApplication(SCREEN_WIDTH, SCREEN_HEIGHT)
+    arcade.run()
