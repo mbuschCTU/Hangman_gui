@@ -51,7 +51,8 @@ class Word(object):
         """Constructor for Word"""
         with open(fname,'r') as infile:
             self.target_word = choice(list(infile))
-        self.target_word = self.target_word.rstrip()
+        self.target_word = self.target_word.rstrip().upper()
+        # self.target_word = 'APPLE'
         print('Target word =  ', self.target_word)
         self.target_length = len(self.target_word)
         self.guess_word = ['_'] * self.target_length
@@ -82,6 +83,8 @@ class MyApplication(arcade.Window):
             self.player_sprite.center_x = (SPRITE_WIDTH // 2 + 1)
             self.player_sprite.center_y = SCREEN_HEIGHT - (SPRITE_HEIGHT // 2 + 1)
             self.all_sprites_list.append(self.player_sprite)
+        self.win = False
+        self.lose = False
         print('Setup done.')
 
         # Note:
@@ -107,19 +110,25 @@ class MyApplication(arcade.Window):
         # Draw Hangman sprite
         self.all_sprites_list[self.current_sprite].draw()
 
-        self.word.used_letters = ['A','S','F']
+        # self.word.used_letters = ['A','S','F']
         # Draw the text
         arcade.draw_text('Used Letters',
                          SCREEN_WIDTH //2, SCREEN_HEIGHT - 50, arcade.color.BLACK, 36)
-        arcade.draw_text(' '.join(self.word.used_letters), SCREEN_WIDTH//2, SCREEN_HEIGHT - 75,
-                         arcade.color.BLUE, 24)
+        arcade.draw_text(' '.join(self.word.used_letters), SCREEN_WIDTH//2, SCREEN_HEIGHT - 85,
+                         arcade.color.BRIGHT_MAROON, 24)
 
         arcade.draw_text('Target Word',
                          10, SCREEN_HEIGHT // 3 + 75, arcade.color.BLACK, 36)
 
         arcade.draw_text(' '.join(self.word.guess_word),
-                         10, SCREEN_HEIGHT // 3, arcade.color.BLACK,36)
+                         10, SCREEN_HEIGHT // 3, arcade.color.BLUE,36)
 
+        if self.win:
+            arcade.draw_text('Winner!',
+                             200, 50, arcade.color.YELLOW_ORANGE, 72)
+        if self.lose:
+            arcade.draw_text('Loser!',
+                             200, 50, arcade.color.RED_DEVIL, 72)
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -134,26 +143,34 @@ class MyApplication(arcade.Window):
         # modifiers by using a bit-wise 'and'.)
 
         #Check for actual alphabet key
-        if key in range(arcade.key.A, arcade.key.Z):
+        if key in range(arcade.key.A, arcade.key.Z) and not self.win or self.lose:
+            letter = chr(key).upper()
+            index_list = handle_input(letter, self.word.target_word, self.word.used_letters)
+            if len(index_list) > 0:
+                for index in index_list:
+                    self.word.guess_word[index] = letter
+            else:
+                self.current_sprite += 1
             self.word.used_letters.append(chr(key).upper())
-            print("you pressed ", chr(key).upper())
 
-
-        if key == arcade.key.SPACE and key_modifiers == arcade.key.MOD_SHIFT:
-            print("You pressed shift-space")
-
-        # See if the user just hit space.
-        elif key == arcade.key.SPACE:
-            print("You pressed the space bar.")
-
+        # Check for win or loss
+            self.win = self.word.guess_word.count('_') == 0
+            self.lose = self.current_sprite == len(self.all_sprites_list) - 1
 
 # ------------------------------------------------#
 
-def handle_input(letter, target):
-    """"""
-    return a, b
+def handle_input(letter, target, used):
+    """
+    Find all indeces of letter in target
+    :param letter: User input guess 
+    :param target: Target word user is guessing
+    :param used: List of letters already guessed
+    :return: list of letter positions or empty list
+    """
+    if letter not in used and letter in target:
+        return [i for i,x in enumerate(target) if x == letter ]
+    return []
 
-ind1, ind2 = handle_input()
 
 if __name__ == '__main__':
     window = MyApplication(SCREEN_WIDTH, SCREEN_HEIGHT)
