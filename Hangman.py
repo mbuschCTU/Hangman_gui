@@ -143,15 +143,16 @@ class MyApplication(arcade.Window):
         # modifiers by using a bit-wise 'and'.)
 
         #Check for actual alphabet key
-        if key in range(arcade.key.A, arcade.key.Z) and not self.win or self.lose:
+        if key in range(arcade.key.A, arcade.key.Z + 1) and not (self.win or self.lose):
             letter = chr(key).upper()
             index_list = handle_input(letter, self.word.target_word, self.word.used_letters)
-            if len(index_list) > 0:
-                for index in index_list:
-                    self.word.guess_word[index] = letter
-            else:
-                self.current_sprite += 1
-            self.word.used_letters.append(chr(key).upper())
+            if letter not in self.word.used_letters:
+                if len(index_list) > 0:
+                    for index in index_list:
+                        self.word.guess_word[index] = letter
+                elif len(index_list) == 0:
+                    self.current_sprite += 1
+                    self.word.used_letters.append(chr(key).upper())
 
         # Check for win or loss
             self.win = self.word.guess_word.count('_') == 0
